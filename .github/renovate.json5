@@ -1,0 +1,47 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":dependencyDashboard",
+    ":semanticCommitsDisabled",
+  ],
+  labels: ["dependencies"],
+  timezone: "Asia/Tokyo",
+  schedule: ["after 9am on friday", "before 6pm on friday"],
+  // Lockfiles are maintained by lockfile-maintenance-action.
+  lockFileMaintenance: {
+    enabled: false,
+  },
+  vulnerabilityAlerts: {
+    enabled: true,
+    labels: ["dependencies", "security"],
+  },
+  packageRules: [
+    {
+      matchUpdateTypes: ["major"],
+      addLabels: ["dependencies:major"],
+    },
+    {
+      matchManagers: ["github-actions"],
+      groupName: "github actions",
+      labels: ["dependencies"],
+      minimumReleaseAge: "7 days",
+    },
+    {
+      // The github-runners datasource has no release timestamps, so
+      // minimumReleaseAge would leave runner PRs pending forever.
+      // https://github.com/renovatebot/renovate/issues/45236
+      matchDepTypes: ["github-runner"],
+      minimumReleaseAge: null,
+    },
+    {
+      matchManagers: ["cargo"],
+      matchDepTypes: ["dev-dependencies"],
+      groupName: "dev dependencies",
+      labels: ["dependencies", "automerge"],
+      automerge: true,
+      minimumReleaseAge: "3 days",
+    },
+  ],
+}

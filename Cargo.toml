@@ -1,0 +1,43 @@
+[package]
+name = "qpath"
+version = "0.2.0"
+edition = "2024"
+authors = ["Akinori Musha <knu@idaemons.org>"]
+description = "Register, list, and maintain frequently used file and directory paths"
+license = "MIT"
+repository = "https://github.com/knu/qpath"
+readme = "README.md"
+keywords = ["path", "bookmark", "cli"]
+categories = ["command-line-utilities"]
+exclude = ["QPath.md"]
+
+[package.metadata.release]
+# crates.io publishing is handled by the CI trusted-publishing workflow on a
+# pushed tag, not by cargo-release.  Pushing is left manual so the release tag
+# (the CI trigger) is created locally and pushed deliberately.
+publish = false
+push = false
+pre-release-commit-message = "Bump version to {{version}}"
+tag-message = "Release version {{version}}"
+# Refresh CHANGELOG.md for the new version before the release commit.
+pre-release-hook = ["sh", "-c", "git-cliff --tag \"v$NEW_VERSION\" --output CHANGELOG.md"]
+
+[dependencies]
+anyhow = "1"
+brace-expand = "0.1"
+clap = { version = "4", features = ["derive"] }
+glob = "0.3"
+libc = "0.2"
+minijinja = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1.0"
+toml_edit = "0.25"
+
+[dev-dependencies]
+tempfile = "3"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
